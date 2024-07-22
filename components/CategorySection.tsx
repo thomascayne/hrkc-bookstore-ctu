@@ -1,23 +1,21 @@
 // components/CategorySection.tsx
 
-"use client";
-
-import { Book } from "@/app/interfaces/Book";
-import React, { useEffect, useState } from "react";
-import useEmblaCarousel from "embla-carousel-react";
 import {
   NextButton,
   PrevButton,
   usePrevNextButtons,
 } from "./EmblaCarouselArrowButtons";
+import { Book } from "@/app/interfaces/Book";
+import React, { useEffect, useState } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import { useBookFetch } from "@/app/hooks/useBookFetch";
 
 interface CategorySectionProps {
   category: { key: string; label: string };
 }
 
 export default function CategorySection({ category }: CategorySectionProps) {
-  const [books, setBooks] = useState<Book[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { books, isLoading } = useBookFetch(category);
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
@@ -31,42 +29,6 @@ export default function CategorySection({ category }: CategorySectionProps) {
     onPrevButtonClick,
     onNextButtonClick,
   } = usePrevNextButtons(emblaApi);
-
-  useEffect(() => {
-    const fetchBooks = async () => {
-      setIsLoading(true);
-
-      const apiKey = process.env.NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY;
-      const apiUrl = process.env.NEXT_PUBLIC_GOOGLE_BOOKS_API_URL;
-
-      try {
-        const response = await fetch(
-          `${apiUrl}?q=subject:${encodeURIComponent(
-            category.label
-          )}&orderBy=relevance&maxResults=12&key=${apiKey}`
-        );
-
-        const data = await response.json();
-        const fetchedItems = data.items || [];
-
-        // Filter books to only include those with image links
-        const booksWithImages = fetchedItems.filter(
-          (book: Book) =>
-            book.volumeInfo &&
-            book.volumeInfo.imageLinks &&
-            book.volumeInfo.imageLinks.thumbnail
-        );
-
-        setBooks(booksWithImages);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching books:", error);
-        // Handle error (e.g., show an error message to the user)
-      }
-    };
-
-    fetchBooks();
-  }, [category]);
 
   const renderLoadingMasks = () => (
     <>

@@ -29,9 +29,13 @@ import ThemeSwitch, { Theme } from "./ThemeSwitcher";
 
 interface AuthNavbarProps {
   user: User | null;
+  disableMenuItems?: boolean;
 }
 
-export default function AuthNavbar({ user }: AuthNavbarProps) {
+export default function AuthNavbar({
+  user,
+  disableMenuItems = false,
+}: AuthNavbarProps) {
   const [theme, setTheme] = useState<Theme>("light");
   const router = useRouter();
 
@@ -43,6 +47,8 @@ export default function AuthNavbar({ user }: AuthNavbarProps) {
   useEffect(() => {
     // check for stored there
     const storedTheme = localStorage.getItem("theme") as Theme | null;
+    console.log("user in navbar", user);
+
     if (storedTheme) {
       setTheme(storedTheme);
     } else if (
@@ -80,9 +86,8 @@ export default function AuthNavbar({ user }: AuthNavbarProps) {
 
   const menuItems = [
     { item: "Categories", icon: <BiCategory /> },
-    { item: "Profile", icon: <FaRegUser /> },
     { item: "Cart", icon: <RiShoppingCart2Line /> },
-    { item: "Help & Feedback", icon: null },
+    { item: user ? "Profile" : "", icon: user ? <FaRegUser /> : "" },
     {
       item: user ? "Sign Out" : "Sign In",
       icon: user ? <VscSignOut /> : <VscSignIn />,
@@ -113,182 +118,191 @@ export default function AuthNavbar({ user }: AuthNavbarProps) {
         justify="end"
         className="this-is-for-when-menu-is-close-on-md-and-up ml-auto"
       >
-        <Dropdown>
-          <NavbarItem className="hidden sm:flex">
-            <DropdownTrigger>
-              <Button
-                disableRipple
-                className="flex border-transparent hover:border-current border-1 rounded-md p-1"
-                radius="sm"
-                variant="light"
+        {!disableMenuItems && (
+          <>
+            <Dropdown>
+              <NavbarItem className="hidden sm:flex">
+                <DropdownTrigger>
+                  <Button
+                    disableRipple
+                    className="flex border-transparent hover:border-current border-1 rounded-md p-1"
+                    radius="sm"
+                    variant="light"
+                  >
+                    <BiCategory className="mr-1" />
+                    <span>Catergories</span>
+                  </Button>
+                </DropdownTrigger>
+              </NavbarItem>
+              <DropdownMenu
+                aria-label="Book Categories"
+                className="p-0"
+                itemClasses={{
+                  base: [
+                    "data-[hover=true]:bg-default-100",
+                    "min-w-[120px]",
+                    "whitespace-nowrap",
+                  ],
+                }}
+                items={bookCategories}
+                classNames={{
+                  list: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-[280px] sm:w-[560px] lg:w-[840px] xl:w-[1120px]",
+                }}
+                onAction={(key) => {
+                  const category = bookCategories.find(
+                    (cat) => cat.key === key
+                  );
+
+                  if (category) {
+                    handleCategorySelect(category.key, category.label);
+                  }
+                }}
               >
-                <BiCategory className="mr-1" />
-                <span>Catergories</span>
-              </Button>
-            </DropdownTrigger>
-          </NavbarItem>
-          <DropdownMenu
-            aria-label="Book Categories"
-            className="p-0"
-            itemClasses={{
-              base: [
-                "data-[hover=true]:bg-default-100",
-                "min-w-[120px]",
-                "whitespace-nowrap",
-              ],
-            }}
-            items={bookCategories}
-            classNames={{
-              list: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-[280px] sm:w-[560px] lg:w-[840px] xl:w-[1120px]",
-            }}
-            onAction={(key) => {
-              const category = bookCategories.find((cat) => cat.key === key);
-              console.log("category: " + category);
-              if (category) {
-                handleCategorySelect(category.key, category.label);
-              }
-            }}
-          >
-            {(category) => (
-              <DropdownItem key={category.key}>
+                {(category) => (
+                  <DropdownItem key={category.key}>
+                    <Link
+                      href={`/category/${encodeURIComponent(category.key)}`}
+                      className="flex items-center p-2 w-full"
+                    >
+                      <span>{category.label}</span>
+                    </Link>
+                  </DropdownItem>
+                )}
+              </DropdownMenu>
+            </Dropdown>
+            <NavbarItem className="hidden sm:flex">
+              <Link
+                color="foreground"
+                href="#"
+                className="flex border-transparent hover:border-current border-1 rounded-md p-1"
+              >
+                <RiShoppingCart2Line className="mr-1" />
+                <span>Cart</span>
+              </Link>
+            </NavbarItem>
+            <NavbarItem className="hidden sm:flex">
+              {user ? (
+                <div className="flex">
+                  <Link
+                    href="/my-profile"
+                    className="py-2 px-3 flex no-underline bg-transparent border-transparent hover:border-current border-1 rounded-md p-1"
+                  >
+                    <FaRegUser className="mr-1" />
+                    <span>Profile</span>
+                  </Link>
+                  <form action="/logout" method="post">
+                    <button className="py-2 px-3 flex no-underline bg-transparent border-transparent hover:border-current border-1 rounded-md p-1">
+                      <VscSignOut className="mr-1" />
+                      <span>Sign Out</span>
+                    </button>
+                  </form>
+                </div>
+              ) : (
                 <Link
-                  href={`/category/${encodeURIComponent(category.key)}`}
-                  className="flex items-center p-2 w-full"
+                  href="/login"
+                  className="py-2 px-3 flex no-underline bg-transparent border-transparent hover:border-current border-1 rounded-md p-1"
                 >
-                  <span>{category.label}</span>
+                  <VscSignIn className="mr-1" />
+                  <span>Sign In</span>
                 </Link>
-              </DropdownItem>
-            )}
-          </DropdownMenu>
-        </Dropdown>
-        <NavbarItem className="hidden sm:flex">
-          <Link
-            href="#"
-            aria-current="page"
-            className="flex border-transparent hover:border-current border-1 rounded-md p-1"
-          >
-            <FaRegUser className="mr-1" />
-            <span>Profile</span>
-          </Link>
-        </NavbarItem>
-        <NavbarItem className="hidden sm:flex">
-          <Link
-            color="foreground"
-            href="#"
-            className="flex border-transparent hover:border-current border-1 rounded-md p-1"
-          >
-            <RiShoppingCart2Line className="mr-1" />
-            <span>Cart</span>
-          </Link>
-        </NavbarItem>
-        <NavbarItem className="hidden sm:flex">
-          {user ? (
-            <div className="flex">
-              Hey, {user.email}!
-              <form action="/logout" method="post">
-                <button className="py-2 px-3 flex no-underline bg-transparent border-transparent hover:border-current border-1 rounded-md p-1">
-                  <VscSignOut className="mr-1" />
-                  <span>Sign Out</span>
-                </button>
-              </form>
-            </div>
-          ) : (
-            <Link
-              href="/login"
-              className="py-2 px-3 flex no-underline bg-transparent border-transparent hover:border-current border-1 rounded-md p-1"
-            >
-              <VscSignIn className="mr-1" />
-              <span>Sign In</span>
-            </Link>
-          )}
-        </NavbarItem>
+              )}
+            </NavbarItem>
+          </>
+        )}
         <NavbarItem>
           <ThemeSwitch onThemeChange={handleThemeChange} initialTheme={theme} />
         </NavbarItem>
-        <NavbarMenuToggle
-          className="sm:hidden"
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-        />
+
+        {!disableMenuItems && (
+          <NavbarMenuToggle
+            className="sm:hidden"
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          />
+        )}
       </NavbarContent>
 
-      <NavbarMenu className="this-is-for-when-the-menu-is-open sm:flex">
-        {menuItems.map(({ item, icon }, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
-            {item === "Sign Out" ? (
-              <form action="/logout" method="post">
-                <button className="w-full text-danger text-lg">
-                  {icon && <span className="mr-2">{icon}</span>}
-                  {item}
-                </button>
-              </form>
-            ) : item === "Categories" ? (
-              <Dropdown>
-                <DropdownTrigger>
-                  <Link
-                    color={index === 2 ? "primary" : "foreground"}
-                    className="w-full cursor-pointer"
-                    size="lg"
-                  >
+      {!disableMenuItems && (
+        <NavbarMenu className="this-is-for-when-the-menu-is-open sm:flex">
+          {menuItems.map(({ item, icon }, index) => (
+            <NavbarMenuItem
+              key={`${item}-${index}`}
+              className="hover:bg-default-300 text-blue-500 dark:hover:bg-gray-300 dark:hover:text-black"
+            >
+              {item === "Sign Out" ? (
+                <form action="/logout" method="post">
+                  <button className="w-full flex text-danger text-lg items-center">
                     {icon && <span className="mr-2">{icon}</span>}
                     {item}
-                  </Link>
-                </DropdownTrigger>
-                <DropdownMenu
-                  aria-label="Book Categories"
-                  className="p-0 w-full max-h-[calc(100vh-100px)] overflow-auto"
-                  itemClasses={{
-                    base: [
-                      "data-[hover=true]:bg-default-100",
-                      "min-w-[120px]",
-                      "whitespace-nowrap",
-                    ],
-                  }}
-                  items={bookCategories}
-                  classNames={{
-                    list: "grid grid-cols-2 sm:grid-cols-2 gap-4 p-4",
-                  }}
-                  onAction={(key) => {
-                    const category = bookCategories.find(
-                      (cat) => cat.key === key
-                    );
-                    console.log("category: " + category);
-                    if (category) {
-                      handleCategorySelect(category.key, category.label);
-                    }
-                  }}
+                  </button>
+                </form>
+              ) : item === "Categories" ? (
+                <Dropdown>
+                  <DropdownTrigger>
+                    <Link
+                      color={index === 2 ? "primary" : "foreground"}
+                      className="w-full cursor-pointer"
+                      size="lg"
+                    >
+                      {icon && <span className="mr-2">{icon}</span>}
+                      {item}
+                    </Link>
+                  </DropdownTrigger>
+                  <DropdownMenu
+                    aria-label="Book Categories"
+                    className="p-0 w-full max-h-[calc(100vh-100px)] overflow-auto"
+                    itemClasses={{
+                      base: [
+                        "data-[hover=true]:bg-default-100",
+                        "min-w-[120px]",
+                        "whitespace-nowrap",
+                      ],
+                    }}
+                    items={bookCategories}
+                    classNames={{
+                      list: "grid grid-cols-2 sm:grid-cols-2 gap-2 py-2 px-4",
+                    }}
+                    onAction={(key) => {
+                      const category = bookCategories.find(
+                        (cat) => cat.key === key
+                      );
+                      if (category) {
+                        handleCategorySelect(category.key, category.label);
+                      }
+                    }}
+                  >
+                    {(category) => (
+                      <DropdownItem key={category.key}>
+                        <Link
+                          href={`/category/${encodeURIComponent(category.key)}`}
+                          className="flex items-center p-2 w-full"
+                        >
+                          <span>{category.label}</span>
+                        </Link>
+                      </DropdownItem>
+                    )}
+                  </DropdownMenu>
+                </Dropdown>
+              ) : (
+                <Link
+                  color={
+                    index === 2
+                      ? "primary"
+                      : index === menuItems.length - 1
+                      ? "foreground"
+                      : "foreground"
+                  }
+                  className="w-full"
+                  href={item === "Sign In" ? "/login" : "#"}
+                  size="lg"
                 >
-                  {(category) => (
-                    <DropdownItem key={category.key}>
-                      <Link
-                        href={`/category/${encodeURIComponent(category.key)}`}
-                        className="flex items-center p-2 w-full"
-                      >
-                        <span>{category.label}</span>
-                      </Link>
-                    </DropdownItem>
-                  )}
-                </DropdownMenu>
-              </Dropdown>
-            ) : (
-              <Link
-                color={
-                  index === 2
-                    ? "primary"
-                    : index === menuItems.length - 1
-                    ? "foreground"
-                    : "foreground"
-                }
-                className="w-full"
-                href={item === "Sign In" ? "/login" : "#"}
-                size="lg"
-              >
-                {icon && <span className="mr-2">{icon}</span>}
-                {item}
-              </Link>
-            )}
-          </NavbarMenuItem>
-        ))}
-      </NavbarMenu>
+                  {icon && <span className="mr-2">{icon}</span>}
+                  {item}
+                </Link>
+              )}
+            </NavbarMenuItem>
+          ))}
+        </NavbarMenu>
+      )}
     </Navbar>
   );
 }

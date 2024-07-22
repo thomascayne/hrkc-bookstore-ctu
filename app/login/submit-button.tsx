@@ -1,19 +1,48 @@
+// app/login/submit-button.tsx
 "use client";
 
 import { useFormStatus } from "react-dom";
-import { type ComponentProps } from "react";
+import { useEffect, useState } from "react";
 
-type Props = ComponentProps<"button"> & {
-  pendingText?: string;
-};
+export function SubmitButton({
+  children,
+  pendingText,
+  className,
+  formAction,
+  ...props
+}: {
+  children: React.ReactNode;
+  pendingText: string;
+  className?: string;
+  formAction: (formData: FormData) => Promise<void>;
+} & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "formAction">) {
+  const { pending } = useFormStatus();
+  const [isPending, setIsPending] = useState(false);
 
-export function SubmitButton({ children, pendingText, ...props }: Props) {
-  const { pending, action } = useFormStatus();
+  useEffect(() => {
+    setIsPending(pending);
+  }, [pending]);
 
-  const isPending = pending && action === props.formAction;
+  const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    setIsPending(true);
+    const form = event.currentTarget.closest("form");
+    if (form) {
+      const formData = new FormData(form);
+      await formAction(formData);
+    }
+    setIsPending(false);
+  };
 
   return (
-    <button {...props} type="submit" aria-disabled={pending}>
+    <button
+      className={`${className} ${
+        isPending ? "opacity-50 cursor-not-allowed" : ""
+      }`}
+      disabled={isPending}
+      onClick={handleClick}
+      {...props}
+    >
       {isPending ? pendingText : children}
     </button>
   );

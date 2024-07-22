@@ -1,17 +1,17 @@
-// app/login/page.tsx
-import LoginForm from "./LoginForm";
+// app/reset-password/page.tsx
+import ResetPasswordForm from "./ResetPasswordForm";
 import AuthNavbar from "@/components/AuthNavbar";
 
-export default function LoginPage() {
+export default function ResetPasswordPage() {
   return (
     <>
       <AuthNavbar user={null} disableMenuItems={true} />
       <div className="flex min-h-screen flex-col items-center justify-center">
-        <div className="login-form-wrapper w-full max-w-md px-8 mt-[-6rem]">
+        <div className="reset-password-form-wrapper w-full max-w-md px-8 mt-[-6rem]">
           <h1 className="text-2xl font-bold mb-6 text-center">
-            Sign In or Create an Account
+            Reset Your Password
           </h1>
-          <LoginForm />
+          <ResetPasswordForm />
         </div>
       </div>
     </>

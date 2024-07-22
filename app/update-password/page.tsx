@@ -1,17 +1,17 @@
-// app/login/page.tsx
-import LoginForm from "./LoginForm";
+// app/update-password/page.tsx
 import AuthNavbar from "@/components/AuthNavbar";
+import UpdatePasswordForm from "./UpdatePasswordForm";
 
-export default function LoginPage() {
+export default function UpdatePasswordPage() {
   return (
     <>
       <AuthNavbar user={null} disableMenuItems={true} />
       <div className="flex min-h-screen flex-col items-center justify-center">
-        <div className="login-form-wrapper w-full max-w-md px-8 mt-[-6rem]">
+        <div className="update-password-form-wrapper w-full max-w-md px-8 mt-[-6rem]">
           <h1 className="text-2xl font-bold mb-6 text-center">
-            Sign In or Create an Account
+            Update Your Password
           </h1>
-          <LoginForm />
+          <UpdatePasswordForm />
         </div>
       </div>
     </>

@@ -1,3 +1,4 @@
+// middleware.ts - outside of the Next.js app
 import { type NextRequest } from "next/server";
 import { updateSession } from "@/utils/supabase/middleware";
 

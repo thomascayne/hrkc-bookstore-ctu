@@ -1,6 +1,4 @@
-/**
- * utils/supabase/actions.ts
- */
+// utils/supabase/actions.ts
 'use server';
 
 import { createClient } from "@/utils/supabase/server";

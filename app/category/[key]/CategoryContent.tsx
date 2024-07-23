@@ -164,10 +164,10 @@ export default function CategoryContent({
           <p className="mb-2">
             <strong>Pages:</strong> {bookDetails.volumeInfo.pageCount}
           </p>
-          <p className="mb-4">
+          <div className="mb-4">
             <strong>Description:</strong>{" "}
             <SafeHTML html={bookDetails.volumeInfo.description || ""} />
-          </p>
+          </div>
           {bookDetails.volumeInfo.categories && (
             <p className="mb-2">
               <strong>Categories:</strong>{" "}
@@ -201,59 +201,46 @@ export default function CategoryContent({
         </div>
         <div className="masonry-grid columns-2 sm:columns-3 md:columns-4 lg:columns-6 xl:columns-8 gap-4 w-full">
           {isLoading
-            ? Array.from({ length: 8 }).map((_, index) => {
-                const aspectRatio = 3 + Math.random();
-                const titleHeight = 16 + Math.random() * 8;
-                const authorHeight = 12 + Math.random() * 4;
-
-                return (
+            ? Array.from({ length: 8 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="mask-placeholder shadow-sm mb-4 flex transition-all ease-in-out duration-150 flex-col items-center justify-center border p-4 rounded cursor-pointer hover:border-blue-500 break-inside-avoid bg-gray-200 animate-pulse w-full min-w-[120px]"
+                >
                   <div
-                    key={index}
-                    className="mask-placeholder shadow-sm mb-4 flex transition-all ease-in-out duration-150 flex-col items-center justify-center border p-4 rounded cursor-pointer hover:border-blue-500 break-inside-avoid bg-gray-200 animate-pulse w-full min-w-[120px]"
-                  >
-                    <div
-                      className="w-full bg-gray-300 mb-2 min-h-[160px]"
-                      style={{ aspectRatio: `${aspectRatio}/${4}` }}
-                    ></div>
-                    <div
-                      className="w-full bg-gray-300 mb-2 min-w-[100px]"
-                      style={{ height: `${titleHeight}px` }}
-                    ></div>
-                    <div
-                      className="w-2/3 bg-gray-300 min-w-[80px]"
-                      style={{ height: `${authorHeight}px` }}
-                    ></div>
-                  </div>
-                );
-              })
+                    className="w-full bg-gray-300 mb-2 min-h-[160px]"
+                    style={{ aspectRatio: "3/4" }}
+                  ></div>
+                  <div
+                    className="w-full bg-gray-300 mb-2 min-w-[100px]"
+                    style={{ height: "20px" }}
+                  ></div>
+                  <div
+                    className="w-2/3 bg-gray-300 min-w-[80px]"
+                    style={{ height: "16px" }}
+                  ></div>
+                </div>
+              ))
             : displayedBooks.map((book) => {
-                const titleWithoutSpaces = book.volumeInfo.title.replace(
-                  /\s/g,
-                  ""
-                );
-                const shouldBreakTitle = titleWithoutSpaces.length > 25;
-
                 return (
                   <div
                     key={book.id}
                     className="relative group overflow-hidden shadow-sm mb-4 flex transition-all ease-in-out duration-150 flex-col items-center justify-center border p-4 rounded hover:border-blue-500 break-inside-avoid"
                   >
-                    {book.volumeInfo.imageLinks && (
-                      <img
-                        src={book.volumeInfo.imageLinks.thumbnail}
-                        alt={book.volumeInfo.title}
-                        className="mb-2 cursor-pointer"
-                        onClick={() => handleBookClick(book)}
-                      />
-                    )}
-                    <h2
+                    <div
+                      className="w-full flex flex-col items-center cursor-pointer pt-1 hover:bg-gray-100"
                       onClick={() => handleBookClick(book)}
-                      className={`cursor-pointer font-bold book-name whitespace-normal ${
-                        shouldBreakTitle ? "break-all" : ""
-                      }`}
                     >
-                      {book.volumeInfo.title}
-                    </h2>
+                      {book.volumeInfo.imageLinks && (
+                        <img
+                          src={book.volumeInfo.imageLinks.thumbnail}
+                          alt={book.volumeInfo.title}
+                          className="mb-2"
+                        />
+                      )}
+                      <h2 className="font-bold book-name whitespace-normal">
+                        {book.volumeInfo.title}
+                      </h2>
+                    </div>
                     <p className="book-authors">
                       {book.volumeInfo.authors?.join(", ").substring(0, 20)}
                     </p>

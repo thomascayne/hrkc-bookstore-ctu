@@ -1,5 +1,7 @@
 // components/EmblaCarouselArrowButtons.tsx
 
+"use client";
+
 import React, {
   ComponentPropsWithRef,
   useCallback,

@@ -2,20 +2,16 @@
  * app/protected/page.tsx
  */
 
-import AuthNavbar from "@/components/AuthNavbar";
-import Header from "@/components/Header";
-import FetchDataSteps from "@/components/tutorial/FetchDataSteps";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import AuthNavbar from "@/components/AuthNavbar";
+import Header from "@/components/Header";
 
 export default async function ProtectedPage() {
   const supabase = createClient();
+  const { data, error } = await supabase.auth.getUser();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  if (!data.user) {
     return redirect("/login");
   }
 
@@ -27,14 +23,13 @@ export default async function ProtectedPage() {
           user
         </div>
 
-        <AuthNavbar user={user} />
+        <AuthNavbar user={data.user} />
       </div>
 
       <div className="animate-in flex-1 flex flex-col gap-20 opacity-0 max-w-4xl px-3">
         <Header />
         <main className="flex-1 flex flex-col gap-6">
           <h2 className="font-bold text-4xl mb-4">User Dashboard</h2>
-          <FetchDataSteps />
         </main>
       </div>
 

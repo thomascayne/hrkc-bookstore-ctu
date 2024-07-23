@@ -1,15 +1,15 @@
 // app/reset-password/ResetPasswordForm.tsx
 "use client";
 
-import { useState } from "react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "@/utils/supabase/server";
 import { SubmitButton } from "../login/submit-button";
+import { useState } from "react";
 import Link from "next/link";
 
 export default function ResetPasswordForm() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState<string | null>(null);
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
   const handleResetPassword = async (formData: FormData) => {
     const email = formData.get("email") as string;

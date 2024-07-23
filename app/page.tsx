@@ -1,21 +1,18 @@
 // app/page.tsx
-"use client";
 
+import { createClient } from "@/utils/supabase/server";
+import { featuredCategories } from "@/utils/featuredCategories";
+import AuthNavbar from "../components/AuthNavbar";
 import CategorySection from "@/components/CategorySection";
 import Footer from "@/components/Footer";
 
-import { featuredCategories } from "@/utils/featuredCategories";
-import { useSupabaseUser } from "./supabase-provider";
-
-import AuthNavbar from "../components/AuthNavbar";
-import { useEffect } from "react";
-
-export default function Index() {
-  const user = useSupabaseUser();
+export default async function Index() {
+  const supabase = createClient();
+  const { data, error } = await supabase.auth.getUser();
 
   return (
     <div className="main-page-container flex-1 w-full flex flex-col gap-20 items-center overflow-hidden">
-      <AuthNavbar user={user} />
+      <AuthNavbar user={data.user} />
 
       <div className="main-container animate-in flex-1 flex flex-col opacity-0 px-3">
         <main className="flex-1 flex flex-col gap-6 overflow-hidden w-screen">

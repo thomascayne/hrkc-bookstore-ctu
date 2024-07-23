@@ -1,12 +1,12 @@
 // components/CategorySection.tsx
+"use client";
 
 import {
   NextButton,
   PrevButton,
   usePrevNextButtons,
 } from "./EmblaCarouselArrowButtons";
-import { Book } from "@/app/interfaces/Book";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { useBookFetch } from "@/app/hooks/useBookFetch";
 

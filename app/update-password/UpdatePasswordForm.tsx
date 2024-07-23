@@ -1,16 +1,16 @@
 // app/update-password/UpdatePasswordForm.tsx
 "use client";
 
-import { useState } from "react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "@/utils/supabase/server";
 import { SubmitButton } from "../login/submit-button";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function UpdatePasswordForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState<string | null>(null);
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
   const router = useRouter();
 
   const handleUpdatePassword = async (formData: FormData) => {

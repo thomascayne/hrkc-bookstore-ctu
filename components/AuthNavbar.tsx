@@ -47,7 +47,6 @@ export default function AuthNavbar({
   useEffect(() => {
     // check for stored there
     const storedTheme = localStorage.getItem("theme") as Theme | null;
-    console.log("user in navbar", user);
 
     if (storedTheme) {
       setTheme(storedTheme);
@@ -184,7 +183,7 @@ export default function AuthNavbar({
               {user ? (
                 <div className="flex">
                   <Link
-                    href="/my-profile"
+                    href="/profile"
                     className="py-2 px-3 flex no-underline bg-transparent border-transparent hover:border-current border-1 rounded-md p-1"
                   >
                     <FaRegUser className="mr-1" />

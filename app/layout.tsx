@@ -2,12 +2,8 @@
 import "./globals.css";
 
 import { GeistSans } from "geist/font/sans";
-import SidePanel from "@/components/SidePanel";
-
 import { SidePanelProvider } from "./contexts/SidePanelContext";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
-import SupabaseProvider from "./supabase-provider";
+import SidePanel from "@/components/SidePanel";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -25,11 +21,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = createServerComponentClient({ cookies });
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
   return (
     <html lang="en" className={GeistSans.className} suppressHydrationWarning>
       <head>
@@ -46,14 +37,12 @@ export default async function RootLayout({
         />
       </head>
       <body className="bg-background text-foreground pt-20">
-        <SupabaseProvider initialSession={user}>
-          <SidePanelProvider>
-            <main className="min-h-screen flex flex-col items-center">
-              {children}
-            </main>
-            <SidePanel />
-          </SidePanelProvider>
-        </SupabaseProvider>
+        <SidePanelProvider>
+          <main className="min-h-screen flex flex-col items-center">
+            {children}
+          </main>
+          <SidePanel />
+        </SidePanelProvider>
       </body>
     </html>
   );

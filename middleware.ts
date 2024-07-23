@@ -1,4 +1,6 @@
 // middleware.ts - outside of the Next.js app
+// https://github.com/vercel/next.js/blob/canary/examples/with-supabase/middleware.ts
+
 import { type NextRequest } from "next/server";
 import { updateSession } from "@/utils/supabase/middleware";
 
